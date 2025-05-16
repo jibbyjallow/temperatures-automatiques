@@ -1,0 +1,33 @@
+name: Executa script de temperatures
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # Cada 5 minuts
+
+jobs:
+  run-temperatures:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Executa script de temperatures
+        run: python temps.py
+
+      - name: Puja fitxer JSON generat
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: 'GitHub Actions'
+          author_email: 'actions@github.com'
+          message: 'Afegit fitxer de temperatures automàtic'
+          add: '*.json'
