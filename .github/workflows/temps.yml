@@ -2,7 +2,7 @@ name: Executa script de temperatures
 
 on:
   schedule:
-    - cron: '*/5 * * * *'   # Cada 5 minuts
+    - cron: '59 23 * * *'   # Cada dia a les 23:59 UTC
 
 jobs:
   run-temperatures:
