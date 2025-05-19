@@ -1,33 +1,36 @@
-name: Executa script de temperatures
+name: Test i Push Automàtic
 
 on:
   schedule:
-    - cron: '59 23 * * *'   # Cada dia a les 23:59 UTC
+    - cron: '*/5 * * * *'   # Cada 5 minuts
+  workflow_dispatch:        # Permet executar-ho manualment
+
+permissions:
+  contents: write           # Necessari per fer push
 
 jobs:
-  run-temperatures:
+  run-script:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout del repositori
+        uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Configurar Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.x'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
+      - name: Instal·lar dependències
+        run: pip install requests
 
-      - name: Executa script de temperatures
+      - name: Executar el script
         run: python temps.py
 
-      - name: Puja fitxer JSON generat
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: 'GitHub Actions'
-          author_email: 'actions@github.com'
-          message: 'Afegit fitxer de temperatures automàtic'
-          add: '*.json'
+      - name: Fer commit i push dels resultats
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add temp_*.json
+          git commit -m "Afegir arxiu temperatures del dia $(date +%Y%m%d)" || echo "No hi ha canvis"
+          git push
